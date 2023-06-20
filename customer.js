@@ -13,11 +13,11 @@ class Customer {
     }
 
     withdraw(Amount){
-        this.balance -= balance;
+        this.balance -= Amount;
     }
 
     addBalance(Amount){
-        this.balance +=balance;
+        this.balance +=Amount;
     }
     transfer(customerRef1, amount){
         customerRef1.addBalance(amount);

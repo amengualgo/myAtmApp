@@ -214,23 +214,23 @@ const isValidOption = (SelectedOption) => {
  * Muestra al usuario el saldo total acumulado
  * ***/
 const showBalance = (customer) =>{
-    alert(labelSelectedOption+'\n\tSu saldo a la fecha es: ' + customer.balance);
+    alert(labelSelectedOption+'\n\tSu saldo a la fecha es: ' + customer.getBalance());
 }
 /***
  * Recibe el monto a depositar y lo suma al saldo actual del cliente
  * ***/
 const depositMoney = (customer, Amount) => {
-    customer.balance += parseFloat(Amount);
+    customer.addBalance(parseFloat(Amount));
     alert(labelSelectedOption+'\n\tDepósito realizado correctamente.');
 }
 /***
  * Recibe el monto a retirar, si hay suficiente saldo lo resta, si no muestra un mensaje de fondos insuficientes.
  * ****/
 const withdrawMoney = (customer, Amount) => {
-    if(parseInt(customer.balance) < parseInt(Amount)){
+    if(parseInt(customer.getBalance()) < parseInt(Amount)){
         alert(labelSelectedOption+'\n\tFondos insificientes.');
     }else {
-        customer.balance -= parseInt(Amount);
+        customer.withdraw(parseInt(Amount));
         alert(labelSelectedOption+'\n\tRetiro realizado correctamente.');
     }
 }
@@ -301,11 +301,11 @@ const loanSimulator = (Amount, NumberMonts) =>{
 
 const transferMoney = (customer1,customer2, Amount) => {
 
-    if(parseInt(customer1.balance) < parseInt(Amount)){
+    if(parseInt(customer1.getBalance()) < parseInt(Amount)){
         alert(labelSelectedOption+'\n\tFondos insificientes.');
     }else {
-        customer1.balance -= parseInt(Amount);
-        customer2.balance += parseInt(Amount);
+        customer1.withdraw(parseInt(Amount));
+        customer2.addBalance(parseInt(Amount));
         alert(labelSelectedOption+'\n\tTransferencia realizada correctamente.');
     }
 }
