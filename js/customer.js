@@ -17,6 +17,7 @@ class Customer {
     }
 
     addBalance(Amount){
+        debugger
         this.balance +=Amount;
     }
     transfer(customerRef1, amount){
