@@ -33,29 +33,22 @@
                     </div>
                 </nav>
                 <div class="container-fluid">
-                    <h1 class="mt-4">Transferencias</h1>
+                    <h1 class="mt-4">Conversiones</h1>
 
                     <form class="row g-3">
                         <div class="col-auto">
-                            <label for="txtValorTransferencia" class="visually-hidden">Valor a transferir</label>
-                            <input required type="number" class="form-control" id="txtValorTransferencia" placeholder="Valor a transferir">
+                            <label for="txtValorConversion" class="visually-hidden">Valor en COP a convertir</label>
+                            <input required type="number" class="form-control" id="txtValorConversion" placeholder="Valor en COP a convertir">
                         </div>
 
                         <div class="col-auto">
-                            <select id="cuentaOrigen" class="form-select" aria-label="Default select example">
+                            <select id="listaCurrencies" class="form-select" aria-label="Default select example">
                             </select>
                         </div>
-
                         <div class="col-auto">
-                            <select id="cuentaDestino" class="form-select" aria-label="Default select example">
-                            </select>
-                        </div>
-
-                        <div class="col-auto">
-                            <button onclick="transferir(document.getElementById('txtValorTransferencia').value,
-                                                        document.getElementById('cuentaOrigen').value,
-                                                        document.getElementById('cuentaDestino').value)" type="button" class="btn btn-primary mb-3">
-                                Transferir
+                            <button onclick="convertir(document.getElementById('txtValorConversion').value,
+                                                        document.getElementById('listaCurrencies').value)" type="button" class="btn btn-primary mb-3">
+                                Convertir
                             </button>
                         </div>
 
@@ -63,10 +56,10 @@
                 </div>
             </div>
         </div>
-        <script src="../js/customer.js"></script>
+        <script src="../js/currency.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
         <script src="../js/scripts.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.2/sweetalert.min.js" integrity="sha512-AA1Bzp5Q0K1KanKKmvN/4d3IRKVlv9PYgwFPvm32nPO6QS8yH1HO7LbgB1pgiOxPtfeg5zEn2ba64MUcqJx6CA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-        <script>renderListasCuentas(this.document.getElementById("cuentaOrigen"),this.document.getElementById("cuentaDestino"))</script>
+        <script>renderListaCurrencies(this.document.getElementById("listaCurrencies"))</script>
     </body>
 </html>

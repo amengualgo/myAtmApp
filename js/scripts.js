@@ -1,4 +1,8 @@
 let arrClientes = [];
+let arrCurrencies = [];
+let factoresCop;
+let currencies;
+
 window.addEventListener('DOMContentLoaded', event => {
 
     const sidebarToggle = document.body.querySelector('#sidebarToggle');
@@ -11,7 +15,7 @@ window.addEventListener('DOMContentLoaded', event => {
         });
     }
 });
-const renderClientes = (container)=>{
+const renderClientes = async (container)=>{
     container.innerHTML = "";
     getClientesFromStorage().forEach((value, index) => {
         container.innerHTML += '<div class="card" id="card_"'+index.toString()+' style="width: 21rem; margin: 0px 5px 5px 0px">\n' +
@@ -24,7 +28,26 @@ const renderClientes = (container)=>{
             '    <a onclick="borrarCliente('+value.identificacion+')" href="#" class="card-link">Eliminar</a>\n' +
             '  </div>\n' +
             '</div>';
-    })
+    });
+}
+const getCurrencies = async()=>{
+
+    const requestOptions = {
+        method: 'GET',
+        redirect: 'follow'
+    };
+    arrCurrencies = [];
+    factoresCop = await fetch("https://cdn.jsdelivr.net/gh/fawazahmed0/currency-api@1/latest/currencies/cop.json", requestOptions)
+        .then(result => {return result.json()})
+        .catch(error => console.log('error', error));
+
+    currencies = await fetch("https://cdn.jsdelivr.net/gh/fawazahmed0/currency-api@1/latest/currencies.json", requestOptions)
+        .then(result => {return result.json()})
+        .catch(error => console.log('error', error));
+
+    for (const obj in factoresCop.cop) {
+        arrCurrencies.push(new Currency(obj,currencies[obj]==""?obj:currencies[obj],factoresCop.cop[obj]));
+    }
 }
 
 const renderListasCuentas = (cuentaOrigen, cuentaDestino)=>{
@@ -52,6 +75,21 @@ const renderListasCuentas = (cuentaOrigen, cuentaDestino)=>{
 
     })
 }
+const renderListaCurrencies = async (listaCurrencies)=>{
+
+    await getCurrencies();
+
+    let optionCurr = document.createElement("option");
+    optionCurr.text = "Seleccione la moneda a convertir";
+    optionCurr.value = "";
+    listaCurrencies.add(optionCurr);
+    arrCurrencies.forEach((value, index) => {
+        optionCurr = document.createElement("option");
+        optionCurr.text = value.nombre;
+        optionCurr.value = value.code;
+        listaCurrencies.add(optionCurr);
+    })
+}
 const getClientesFromStorage = ()=>{
     arrClientes = [];
     let _clientes  = JSON.parse(localStorage.getItem("clientes")) || [];
@@ -67,8 +105,15 @@ const validateCliente = (nombre, identificacion, balance)=>{
     if(!identificacion || !nombre || !balance){
         return false;
     }else{
-        if(parseFloat(balance)>=0){
-        return true;
+        if(parseFloat(balance)>=0) {
+
+            if(parseInt(identificacion)>=0){
+                return true;
+            }
+            else{
+                return false;
+            }
+
         }else{
             return false;
         }
@@ -79,6 +124,17 @@ const validateTransfer = (valorTransferencia, identificacionOrigen, identificaci
         return false;
     }else{
         if(parseFloat(identificacionDestino)>=0){
+            return true;
+        }else{
+            return false;
+        }
+    }
+}
+const validateConversion= (valorConversion, monedaDestino)=>{
+    if(!valorConversion || !monedaDestino ){
+        return false;
+    }else{
+        if(parseFloat(valorConversion)>=0){
             return true;
         }else{
             return false;
@@ -98,7 +154,7 @@ const saveCliente=(nombre, identificacion, balance)=>{
             const _cliente = new Customer(identificacion, nombre, parseFloat(balance));
             arrClientes.push(_cliente);
             setClientesToStorage();
-            swal("Cliente agregado correctamente!")
+            sweetAlert("Cliente agregado correctamente!")
                 .then((value) => {
                     location.reload();
                 });
@@ -132,6 +188,15 @@ const transferir=(valorTransferencia, identificacionOrigen, identificacionDestin
         sweetAlert("Oops...", "Digita todos los datos", "error");
     }
 }
+const convertir=(valorConversion, monedaDestino)=> {
+
+    if (validateConversion(valorConversion, monedaDestino)) {
+        const moneda_ = arrCurrencies.filter((value, index) => value.code == monedaDestino)[0];
+        sweetAlert("Conversión", "La conversion de " + valorConversion.toString() +" pesos colombianos a "+ moneda_.nombre + " es "+ valorConversion * moneda_.getfactor(),"success");
+    }else{
+        sweetAlert("Oops...", "Digita todos los datos", "error");
+    }
+}
 const borrarCliente = (identificacion)=>{
     swal({
         title: "¿Está seguro?",
@@ -142,7 +207,7 @@ const borrarCliente = (identificacion)=>{
     })
         .then((willDelete) => {
             if (willDelete) {
-                arrClientes = arrClientes.filter(value => {return value.identificacion != identificacion});
+                arrClientes = arrClientes.filter(value => {return value.identificacion.toString() != identificacion.toString()});
                 setClientesToStorage();
                 location.reload();
             }
